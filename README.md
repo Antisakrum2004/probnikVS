@@ -1,77 +1,36 @@
-# ProbNIK VS — Подсистема видеоконсультаций МИС
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Интеграция МИС (1С:Enterprise 8.3.27) с платформой EmAI и Jitsi Meet для проведения видеоконсультаций между врачом и пациентом.
+## Getting Started
 
-## Структура проекта
+First, run the development server:
 
-```
-/
-├── architecture/
-│   └── ARCHITECTURE.md          — Архитектурная схема и потоки данных
-├── docs/
-│   ├── 01_SPECIFICATION.md       — Полная спецификация (API EmAI, JWT, бизнес-логика)
-│   ├── 02_EXTENSION_METADATA.md  — Метаданные расширения 1С (структура объектов)
-│   └── 03_CFE_BUILD_GUIDE.md     — Пошаговая инструкция по сборке .cfe
-├── src/
-│   ├── 1c-extension/
-│   │   ├── ВидеоконсультацииСервер.bsl          — Серверный модуль (HTTP, РС)
-│   │   ├── ВидеоконсультацииВызовСервера.bsl    — Прокси клиент-серверных вызовов
-│   │   ├── ФормаЗаписьНаПрием.bsl               — Форма «Запись на приём»
-│   │   ├── ФормаОтменаЗаписи.bsl                — Форма «Отмена записи»
-│   │   └── ФормаВидеоконсультация.bsl           — Обработка «Видеоконсультация» (АРМ врача)
-│   ├── php-middleware/
-│   │   ├── index.php            — PHP-роутер (middleware между 1С и EmAI/Jitsi)
-│   │   └── .env.example         — Шаблон конфигурации
-│   └── docker/
-│       └── docker-compose.yml   — Docker Compose (Jitsi + middleware)
-└── README.md
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Архитектура
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```
-1С МИС  ──HTTP POST──▶  PHP Middleware  ──HTTP POST──▶  EmAI Gateway
-   │                     (token-api)                      (оркестрация)
-   │                        │
-   │                        ├── generateJWT() ──▶  Jitsi Meet
-   │                        │                       (видеосвязь)
-   │                        │
-   │                        ◀── JSON ответ ◀───────
-   │
-   └── ЗапуститьПриложение() ──▶  Системный браузер ──▶  Jitsi
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Ключевые решения
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- **1С** — только триггер и хранилище данных (инициирует, хранит в регистре)
-- **PHP Middleware** — единая точка входа (скрывает API-ключи, генерирует JWT, валидирует)
-- **EmAI** — оркестрация (создание комнат, статусы, push пациенту)
-- **Jitsi** — видеосвязь (WebRTC, чат, файлы)
+## Learn More
 
-## Быстрый старт
+To learn more about Next.js, take a look at the following resources:
 
-### PHP Middleware
-1. Скопировать `src/php-middleware/index.php` в контейнер token-api
-2. Настроить `.env` по шаблону `.env.example`
-3. Перезапустить контейнер: `docker compose restart token-api`
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-### Расширение 1С
-1. Следовать инструкции `docs/03_CFE_BUILD_GUIDE.md`
-2. Адаптировать имена объектов под вашу конфигурацию
-3. Протестировать в режиме отладки
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## API Middleware
+## Deploy on Vercel
 
-| Endpoint | Метод | Описание |
-|---|---|---|
-| `/?action=create` | POST | Создание конференции (прокси → EmAI) |
-| `/?action=cancel` | POST | Отмена конференции |
-| `/?action=complete` | POST | Завершение конференции |
-| `/?action=token` | GET | Генерация JWT-токена |
-| `/?room&user&role` | GET | Генерация JWT (обратная совместимость) |
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Версии
-
-- 1С:Enterprise 8.3.27
-- PHP 8.2 (Docker)
-- Jitsi Meet (unstable)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
