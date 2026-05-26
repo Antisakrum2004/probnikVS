@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import type { Room } from '@/lib/types';
 
-function PatientContent({ roomId }: { roomId: string }) {
+function PatientContent({ roomId, searchParams }: { roomId: string; searchParams: string }) {
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -14,6 +14,26 @@ function PatientContent({ roomId }: { roomId: string }) {
 
     async function loadRoom() {
       try {
+        // First: try to decode room data from URL param (embedded data — works without API)
+        const params = new URLSearchParams(searchParams);
+        const dataParam = params.get('data');
+
+        if (dataParam) {
+          try {
+            const decoded = JSON.parse(atob(decodeURIComponent(dataParam)));
+            if (decoded && decoded.id && decoded.doctorName) {
+              if (!cancelled) {
+                setRoom(decoded as Room);
+                setLoading(false);
+              }
+              return;
+            }
+          } catch {
+            // data param invalid, fall through to API
+          }
+        }
+
+        // Fallback: try API
         const res = await fetch(`/api/status?roomId=${encodeURIComponent(roomId)}`);
         if (cancelled) return;
         if (res.ok) {
@@ -32,7 +52,7 @@ function PatientContent({ roomId }: { roomId: string }) {
 
     loadRoom();
     return () => { cancelled = true; };
-  }, [roomId]);
+  }, [roomId, searchParams]);
 
   if (loading) {
     return (
@@ -224,18 +244,18 @@ function PatientContent({ roomId }: { roomId: string }) {
   );
 }
 
-export default function PatientRoomPage({ params }: { params: Promise<{ roomId: string }> }) {
-  const [roomId, setRoomId] = useState<string | null>(null);
+export default function PatientRoomPage({ params, searchParams }: { params: Promise<{ roomId: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const [ready, setReady] = useState<{ roomId: string; sp: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    params.then((p) => {
-      if (!cancelled) setRoomId(p.roomId);
+    Promise.all([params, searchParams]).then(([p, sp]) => {
+      if (!cancelled) setReady({ roomId: p.roomId, sp: new URLSearchParams(sp as Record<string, string>).toString() });
     });
     return () => { cancelled = true; };
-  }, [params]);
+  }, [params, searchParams]);
 
-  if (!roomId) {
+  if (!ready) {
     return (
       <div className="c1-patient-page" style={{ alignItems: 'center', justifyContent: 'center' }}>
         <span className="c1-spinner" style={{ width: 24, height: 24, borderWidth: 3, color: '#2B5879' }} />
@@ -251,7 +271,7 @@ export default function PatientRoomPage({ params }: { params: Promise<{ roomId: 
         </div>
       }
     >
-      <PatientContent roomId={roomId} />
+      <PatientContent roomId={ready.roomId} searchParams={ready.sp} />
     </Suspense>
   );
 }

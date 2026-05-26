@@ -451,15 +451,48 @@ export default function HomePage() {
                         в приложение пациента.
                       </p>
                       <Link
-                        href={`/patient/${createdRoom.id}`}
+                        href={`/patient/${createdRoom.id}?data=${encodeURIComponent(btoa(JSON.stringify({
+                          id: createdRoom.id,
+                          roomName: createdRoom.roomName,
+                          doctorName: createdRoom.doctorName,
+                          patientName: createdRoom.patientName,
+                          patientId: createdRoom.patientId,
+                          doctorSpecId: createdRoom.doctorSpecId,
+                          status: createdRoom.status,
+                          createdAt: createdRoom.createdAt,
+                          emaiSessionId: createdRoom.emaiSessionId,
+                          sessionID: createdRoom.sessionID,
+                        })))}`}
                         className="c1-btn-action c1-btn-action-blue"
                         style={{ textDecoration: 'none' }}
                       >
-                        Отправить push
+                        Отправить push (web)
                         <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 10, height: 10 }}>
                           <path d="M2 5h6M7 2l3 3-3 3" />
                         </svg>
                       </Link>
+                      <p style={{ fontSize: 11, color: '#888', marginTop: 8, lineHeight: 1.4 }}>
+                        Для APK: скопируйте ссылку ниже и откройте на устройстве пациента.
+                        Данные комнаты встроены в URL — работает без API.
+                      </p>
+                      <div style={{ marginTop: 6, padding: 6, background: '#F5F5F5', border: '1px solid #D0D0D0', borderRadius: 2 }}>
+                        <input
+                          readOnly
+                          value={`https://probnik-vs-app.vercel.app/patient/${createdRoom.id}?data=${encodeURIComponent(btoa(JSON.stringify({
+                            id: createdRoom.id,
+                            roomName: createdRoom.roomName,
+                            doctorName: createdRoom.doctorName,
+                            patientName: createdRoom.patientName,
+                            patientId: createdRoom.patientId,
+                            doctorSpecId: createdRoom.doctorSpecId,
+                            status: createdRoom.status,
+                            createdAt: createdRoom.createdAt,
+                            emaiSessionId: createdRoom.emaiSessionId,
+                            sessionID: createdRoom.sessionID,
+                          })))}`}
+                          style={{ width: '100%', fontSize: 10, fontFamily: 'monospace', border: 'none', background: 'transparent', color: '#333', padding: 2 }}
+                        />
+                      </div>
                     </div>
                   </div>
 
