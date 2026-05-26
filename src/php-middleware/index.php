@@ -176,6 +176,32 @@ function getInputParams() {
 }
 
 // ============================================================
+// CORS — разрешить запросы из браузера (для демо и отладки)
+// ============================================================
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header('Access-Control-Allow-Origin: ' . $origin);
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-API-Key');
+header('Access-Control-Max-Age: 86400');
+
+// Preflight OPTIONS — сразу отвечаем 200
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+// ============================================================
+// ДЕМО-СТРАНИЦА (роут /demo)
+// ============================================================
+
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (strpos($requestUri, '/demo') !== false || isset($_GET['demo'])) {
+    include __DIR__ . '/demo.php';
+    exit;
+}
+
+// ============================================================
 // РОУТЕР
 // ============================================================
 

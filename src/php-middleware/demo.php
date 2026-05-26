@@ -1,3 +1,14 @@
+<?php
+/**
+ * demo.php — Демо-страница для показа заказчику
+ * Открывается СРАЗУ на сервере middleware: http://IP:58080/demo.php
+ * Никакого CORS, никакого file:// — всё работает.
+ */
+
+// Разрешить фрейм (если открывают через iframe)
+header('X-Frame-Options: SAMEORIGIN');
+header('Content-Type: text/html; charset=utf-8');
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,16 +33,8 @@
             margin-bottom: 30px;
         }
 
-        .header h1 {
-            font-size: 28px;
-            color: #38bdf8;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #94a3b8;
-            font-size: 14px;
-        }
+        .header h1 { font-size: 28px; color: #38bdf8; margin-bottom: 10px; }
+        .header p { color: #94a3b8; font-size: 14px; }
 
         .flow {
             display: flex;
@@ -51,17 +54,11 @@
 
         .step.active {
             border-left-color: #38bdf8;
-            background: #1e293b;
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
         }
 
-        .step.success {
-            border-left-color: #4ade80;
-        }
-
-        .step.error {
-            border-left-color: #f87171;
-        }
+        .step.success { border-left-color: #4ade80; }
+        .step.error { border-left-color: #f87171; }
 
         .step-number {
             display: inline-block;
@@ -74,30 +71,13 @@
             margin-bottom: 12px;
         }
 
-        .step.active .step-number {
-            background: #0ea5e9;
-            color: white;
-        }
+        .step.active .step-number { background: #0ea5e9; color: white; }
+        .step.success .step-number { background: #22c55e; color: white; }
 
-        .step.success .step-number {
-            background: #22c55e;
-            color: white;
-        }
+        .step h3 { font-size: 18px; margin-bottom: 8px; color: #f1f5f9; }
+        .step p { color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
 
-        .step h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #f1f5f9;
-        }
-
-        .step p {
-            color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .step .details {
+        .details {
             background: #0f172a;
             border-radius: 8px;
             padding: 12px 16px;
@@ -107,22 +87,10 @@
         }
 
         .step.active .details,
-        .step.success .details {
-            display: block;
-        }
+        .step.success .details { display: block; }
 
-        .step .details .method {
-            color: #fbbf24;
-            font-weight: bold;
-        }
-
-        .step .details .url {
-            color: #38bdf8;
-        }
-
-        .step .details .key { color: #a78bfa; }
-        .step .details .str { color: #4ade80; }
-        .step .details .num { color: #fb923c; }
+        .method { color: #fbbf24; font-weight: bold; }
+        .url { color: #38bdf8; }
 
         .response {
             margin-top: 8px;
@@ -147,15 +115,9 @@
             display: none;
         }
 
-        .step.success .link-box {
-            display: block;
-        }
+        .step.success .link-box { display: block; }
 
-        .link-box .label {
-            color: #94a3b8;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
+        .link-box .label { color: #94a3b8; font-size: 12px; margin-bottom: 6px; }
 
         .link-box a {
             color: #38bdf8;
@@ -165,11 +127,9 @@
             font-size: 13px;
         }
 
-        .link-box a:hover {
-            text-decoration: underline;
-        }
+        .link-box a:hover { text-decoration: underline; }
 
-        .link-box .tag {
+        .tag {
             display: inline-block;
             padding: 1px 6px;
             border-radius: 4px;
@@ -187,6 +147,7 @@
             display: flex;
             gap: 12px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -199,33 +160,14 @@
             transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: #0ea5e9;
-            color: white;
-        }
+        .btn-primary { background: #0ea5e9; color: white; }
+        .btn-primary:hover { background: #0284c7; }
+        .btn-primary:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
-        .btn-primary:hover {
-            background: #0284c7;
-        }
-
-        .btn-primary:disabled {
-            background: #334155;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-
+        .btn-danger { background: #ef4444; color: white; }
         .btn-danger:hover { background: #dc2626; }
 
-        .btn-secondary {
-            background: #334155;
-            color: #e2e8f0;
-        }
-
+        .btn-secondary { background: #334155; color: #e2e8f0; }
         .btn-secondary:hover { background: #475569; }
 
         .status-bar {
@@ -237,19 +179,8 @@
             text-align: center;
         }
 
-        .status-bar .label {
-            color: #64748b;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .status-bar .value {
-            color: #f1f5f9;
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 4px;
-        }
+        .status-bar .label { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .status-bar .value { color: #f1f5f9; font-size: 18px; font-weight: 600; margin-top: 4px; }
 
         .spinner {
             display: inline-block;
@@ -263,9 +194,7 @@
             margin-left: 8px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .log {
             max-width: 900px;
@@ -295,10 +224,7 @@
             padding: 20px;
         }
 
-        .config h3 {
-            margin-bottom: 12px;
-            color: #f1f5f9;
-        }
+        .config h3 { margin-bottom: 12px; color: #f1f5f9; }
 
         .config-row {
             display: flex;
@@ -307,11 +233,7 @@
             margin-bottom: 12px;
         }
 
-        .config-row label {
-            width: 200px;
-            color: #94a3b8;
-            font-size: 14px;
-        }
+        .config-row label { width: 200px; color: #94a3b8; font-size: 14px; }
 
         .config-row input {
             flex: 1;
@@ -324,10 +246,21 @@
             font-size: 14px;
         }
 
-        .config-row input:focus {
-            outline: none;
-            border-color: #0ea5e9;
+        .config-row input:focus { outline: none; border-color: #0ea5e9; }
+
+        pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+            padding: 0;
         }
+
+        .cancel-row {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .step.success .cancel-row { display: block; }
     </style>
 </head>
 <body>
@@ -337,37 +270,33 @@
         <p>Интеграция 1С МИС + EmAI + Jitsi Meet | Полный цикл создания и проведения видеоконсультации</p>
     </div>
 
-    <!-- Настройка сервера -->
     <div class="config">
         <h3>Настройки подключения</h3>
         <div class="config-row">
-            <label>Middleware (IP:порт):</label>
-            <input type="text" id="middlewareUrl" value="http://msi-2.dialog.ip:58080" placeholder="http://IP:58080">
-        </div>
-        <div class="config-row">
-            <label>API Key EmAI:</label>
-            <input type="text" id="apiKey" value="emai_dev_7f3a9c2e4b8d1a5f6c0e9b2d7a4f1c8e">
+            <label>Middleware URL:</label>
+            <input type="text" id="middlewareUrl" value="<?php
+                // Автозаполнение: текущий сервер
+                $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $host  = $_SERVER['HTTP_HOST'] ?? 'localhost:58080';
+                echo $proto . '://' . $host;
+            ?>">
         </div>
     </div>
 
-    <!-- Статус -->
     <div class="status-bar">
         <div class="label">Текущий этап</div>
         <div class="value" id="statusText">Ожидание запуска демо</div>
     </div>
 
-    <!-- Лог -->
     <div class="log" id="log">
-        <div class="line"><span class="time">[--:--:--]</span> <span class="info">Система готова к работе</span></div>
+        <div class="line"><span class="time">[--:--:--]</span> <span class="info">Система готова к работе. Нажмите "Запустить демо".</span></div>
     </div>
 
-    <!-- Шаги -->
     <div class="flow">
-        <!-- Шаг 1 -->
         <div class="step" id="step1">
             <div class="step-number">ШАГ 1</div>
             <h3>Создание записи на приём (1С → EmAI)</h3>
-            <p>Регистратор в 1С МИС создаёт документ «Запись на приём», устанавливает галку «Видеоконсультация» и нажимает «Отправить в EmAI». Middleware проксирует запрос в EmAI, получает emaiSessionID и формирует JWT-ссылки.</p>
+            <p>Регистратор в 1С МИС создаёт документ «Запись на приём», устанавливает галку «Видеоконсультация» и нажимает «Отправить в EmAI». Middleware проксирует запрос в EmAI, получает emaiSessionID и формирует JWT-ссылки для врача и пациента.</p>
             <div class="details" id="details1"></div>
             <div class="link-box" id="links1">
                 <div class="label">Ссылка для ВРАЧА (owner — модератор):</div>
@@ -376,39 +305,34 @@
                 <div style="margin-top:8px" class="label">Ссылка для ПАЦИЕНТА (member):</div>
                 <a id="patientLink" href="#" target="_blank"></a>
                 <span class="tag tag-member">MEMBER</span>
+                <div class="cancel-row">
+                    <button class="btn btn-danger" style="margin-top:10px;padding:8px 16px;font-size:12px" onclick="cancelConsultation()">Отменить консультацию</button>
+                </div>
             </div>
         </div>
 
-        <!-- Шаг 2 -->
         <div class="step" id="step2">
             <div class="step-number">ШАГ 2</div>
             <h3>Подключение врача (АРМ «Видеоконсультация»)</h3>
-            <p>Врач открывает обработку «Видеоконсультация», выбирает себя и пациента, нажимает «Начать». 1С находит ссылку в регистре и открывает системный браузер. Врач заходит в Jitsi с правами модератора.</p>
-            <div class="details">
-                <span class="method">GET</span> <span class="url">Ссылка из регистра → Системный браузер → Jitsi Meet</span>
-            </div>
+            <p>Врач открывает обработку «Видеоконсультация», выбирает себя и пациента, нажимает «Начать». 1С находит ссылку в регистре и открывает системный браузер. Врач заходит в Jitsi с правами модератора (owner).</p>
+            <div class="details" id="details2"></div>
         </div>
 
-        <!-- Шаг 3 -->
         <div class="step" id="step3">
             <div class="step-number">ШАГ 3</div>
             <h3>Подключение пациента (Мобильное приложение)</h3>
-            <p>Пациент получает push-уведомление и видит ссылку в приложении. Переходит по ссылке с ролью member — ограниченные права (не может завершить консультацию).</p>
-            <div class="details">
-                <span class="info">Push → Мобильное приложение → Пациент видит ссылку и подключается</span>
-            </div>
+            <p>Пациент получает push-уведомление и видит ссылку в приложении. Переходит по ссылке с ролью member — ограниченные права (не может завершить консультацию, не может мьютить всех).</p>
+            <div class="details" id="details3"></div>
         </div>
 
-        <!-- Шаг 4 -->
         <div class="step" id="step4">
             <div class="step-number">ШАГ 4</div>
             <h3>Завершение консультации (Врач → EmAI)</h3>
-            <p>Врач нажимает «Завершить консультацию» в АРМ. 1С отправляет COMPLETE через middleware в EmAI. В регистре ставится «Приём проведен».</p>
+            <p>Врач нажимает «Завершить консультацию» в АРМ. 1С отправляет COMPLETE через middleware в EmAI. В регистре «Учет видеоконсультаций» ставится «Приём проведен».</p>
             <div class="details" id="details4"></div>
         </div>
     </div>
 
-    <!-- Кнопки -->
     <div class="controls">
         <button class="btn btn-primary" id="btnStart" onclick="startDemo()">Запустить демо</button>
         <button class="btn btn-primary" id="btnStep2" onclick="doctorConnect()" disabled>Шаг 2: Врач подключается</button>
@@ -419,7 +343,7 @@
 
     <script>
         var state = {
-            sessionId: '1C-DEMO-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            sessionId: '',
             emaiSessionId: null,
             doctorLink: '',
             patientLink: '',
@@ -438,37 +362,45 @@
             logEl.scrollTop = logEl.scrollHeight;
         }
 
-        function setStatus(text) {
-            document.getElementById('statusText').textContent = text;
+        function setStatus(text) { document.getElementById('statusText').textContent = text; }
+        function setStep(id, status) { document.getElementById(id).className = 'step ' + status; }
+        function getBaseUrl() { return document.getElementById('middlewareUrl').value.replace(/\/$/, ''); }
+
+        function jsonPretty(obj) {
+            return JSON.stringify(obj, null, 2);
         }
 
-        function setStep(id, status) {
-            var el = document.getElementById(id);
-            el.className = 'step ' + status;
+        function generateSessionId() {
+            var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            var id = '1C-DEMO-';
+            for (var i = 0; i < 6; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+            return id;
         }
 
-        function getMiddlewareUrl() {
-            return document.getElementById('middlewareUrl').value.replace(/\/$/, '');
+        function apiCall(action, payload) {
+            var url = getBaseUrl() + '/?action=' + action;
+            return fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            });
         }
 
-        function showDetails1(req, resp) {
-            document.getElementById('details1').innerHTML =
-                '<span class="method">POST</span> <span class="url">' + getMiddlewareUrl() + '/?action=create</span><br>' +
-                '<pre style="margin-top:8px;color:#94a3b8">' + JSON.stringify(req, null, 2) + '</pre>' +
-                '<div class="response"><div class="label">Ответ EmAI:</div>' +
-                '<pre style="color:#4ade80">' + JSON.stringify(resp, null, 2) + '</pre></div>';
-        }
-
-        // ===== STEP 1: Create =====
+        // ===== STEP 1 =====
         function startDemo() {
-            state.middlewareUrl = getMiddlewareUrl();
+            state.sessionId = generateSessionId();
+            state.middlewareUrl = getBaseUrl();
+
             var btn = document.getElementById('btnStart');
             btn.disabled = true;
             btn.innerHTML = 'Отправка... <span class="spinner"></span>';
 
             setStep('step1', 'active');
             setStatus('Создание конференции...');
-            log('[1С] Формирование запроса на создание конференции', 'info');
+            log('[1С] Документ "Запись на приём" — sessionID=' + state.sessionId, 'info');
 
             var payload = {
                 sessionID: state.sessionId,
@@ -482,15 +414,10 @@
                 ttlMinutes: 60
             };
 
-            log('[Middleware] POST → /?action=create', 'warn');
-            log('[EmAI] Ожидание ответа...', 'info');
+            log('[1С] POST → Middleware/?action=create', 'warn');
+            log('[Middleware] Проксирование в EmAI...', 'info');
 
-            fetch(state.middlewareUrl + '/?action=create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(function(r) { return r.json(); })
+            apiCall('create', payload)
             .then(function(data) {
                 if (data.success) {
                     state.emaiSessionId = data.data.emaiSessionID;
@@ -500,27 +427,32 @@
                     setStep('step1', 'success');
                     setStatus('Конференция создана! EmAI Session: ' + data.data.emaiSessionId);
 
-                    log('[EmAI] success=true, emaiSessionID=' + data.data.emaiSessionId, 'ok');
-                    log('[Middleware] JWT для врача сгенерирован (role=owner)', 'ok');
-                    log('[Middleware] JWT для пациента сгенерирован (role=member)', 'ok');
-                    log('[1С] Статус: "Запрос выполнен успешно"', 'ok');
-                    log('[1С] Запись в РС «УчетВидеоконсультаций» → ПриемЗапланирован = Истина', 'ok');
+                    log('[EmAI] success=true, emaiSessionID=' + data.data.emaiSessionID, 'ok');
+                    log('[Middleware] JWT(owner) для врача сгенерирован', 'ok');
+                    log('[Middleware] JWT(member) для пациента сгенерирован', 'ok');
+                    log('[1С] Статус: "' + data.message + '"', 'ok');
+                    log('[1С] Проведение документа → РС "УчетВидеоконсультаций": ПриемЗапланирован = Истина', 'ok');
 
-                    // Show links
                     document.getElementById('doctorLink').href = state.doctorLink;
                     document.getElementById('doctorLink').textContent = state.doctorLink;
                     document.getElementById('patientLink').href = state.patientLink;
                     document.getElementById('patientLink').textContent = state.patientLink;
 
-                    showDetails1(payload, data);
+                    document.getElementById('details1').innerHTML =
+                        '<span class="method">POST</span> <span class="url">' + getBaseUrl() + '/?action=create</span>' +
+                        '<div class="response" style="margin-top:8px"><div class="label">Запрос:</div>' +
+                        '<pre style="color:#94a3b8">' + jsonPretty(payload) + '</pre></div>' +
+                        '<div class="response"><div class="label">Ответ EmAI:</div>' +
+                        '<pre style="color:#4ade80">' + jsonPretty(data) + '</pre></div>';
 
-                    // Enable next steps
                     document.getElementById('btnStep2').disabled = false;
                     document.getElementById('btnStep3').disabled = false;
                 } else {
                     setStep('step1', 'error');
                     setStatus('Ошибка: ' + data.message);
                     log('[EmAI] ОШИБКА: ' + data.message, 'err');
+                    document.getElementById('details1').innerHTML =
+                        '<pre style="color:#f87171">' + jsonPretty(data) + '</pre>';
                     btn.disabled = false;
                     btn.textContent = 'Повторить';
                 }
@@ -528,51 +460,119 @@
             .catch(function(err) {
                 setStep('step1', 'error');
                 setStatus('Ошибка подключения к middleware');
-                log('[Middleware] ОШИБКА ПОДКЛЮЧЕНИЯ: ' + err.message, 'err');
+                log('[Middleware] ОШИБКА: ' + err.message, 'err');
+                log('[Подсказка] Убедитесь, что middleware запущен: ' + getBaseUrl() + '/?action=token&room=test', 'warn');
                 btn.disabled = false;
                 btn.textContent = 'Повторить';
             });
         }
 
-        // ===== STEP 2: Doctor connects =====
+        // ===== CANCEL =====
+        function cancelConsultation() {
+            if (!state.emaiSessionId) return;
+
+            setStep('step1', 'active');
+            log('[1С] Отмена записи на приём...', 'warn');
+
+            var payload = {
+                sessionID: state.sessionId,
+                emaiSessionID: String(state.emaiSessionId),
+                action: 'CANCEL',
+                eventTime: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+                reason: 'Отмена пользователем'
+            };
+
+            apiCall('cancel', payload)
+            .then(function(data) {
+                if (data.success) {
+                    log('[EmAI] Консультация отменена (CANCEL)', 'ok');
+                    log('[1С] РС → ПриемЗапланирован = Ложь', 'ok');
+                    setStep('step1', 'error');
+                    setStatus('Консультация отменена');
+                    document.getElementById('btnStep2').disabled = true;
+                    document.getElementById('btnStep3').disabled = true;
+                    document.getElementById('btnComplete').disabled = true;
+                } else {
+                    log('[EmAI] Ошибка отмены: ' + data.message, 'err');
+                    setStep('step1', 'success');
+                }
+            })
+            .catch(function(err) {
+                log('[Middleware] Ошибка: ' + err.message, 'err');
+                setStep('step1', 'success');
+            });
+        }
+
+        // ===== STEP 2 =====
         function doctorConnect() {
             setStep('step2', 'active');
             setStatus('Врач подключается...');
 
-            log('[1С] Поиск в РС: Врач=Петров, Пациент=Иванов, Запланирован=Да', 'info');
-            log('[1С] Найдена запись: sessionID=' + state.sessionId, 'ok');
-            log('[1С] Ссылка получена из регистра', 'ok');
-            log('[1С] ЗапуститьПриложение("' + state.doctorLink.substring(0, 60) + '...")', 'warn');
-            log('[Браузер] Открыт Jitsi Meet с JWT (role=owner)', 'ok');
+            log('[1С] Обработка "Видеоконсультация" → Начать', 'info');
+            log('[1С] Поиск в РС: Врач=Петров П.П., Пациент=Иванов И.И., Запланирован=Да', 'info');
+            log('[1С] Запись найдена: emaiSessionID=' + state.emaiSessionId, 'ok');
+            log('[1С] ЗапуститьПриложение(СсылкаВК)', 'warn');
 
             window.open(state.doctorLink, '_blank');
 
+            document.getElementById('details2').innerHTML =
+                '<span class="method">Открыто в браузере:</span><br>' +
+                '<span class="url" style="word-break:break-all">' + state.doctorLink + '</span><br><br>' +
+                '<span style="color:#94a3b8">JWT payload:</span><br>' +
+                '<pre style="color:#4ade80" id="jwtDoctor"></pre>';
+
+            // Декодируем JWT для показа
+            try {
+                var token = state.doctorLink.split('jwt=')[1];
+                var parts = token.split('.');
+                var payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                document.getElementById('jwtDoctor').textContent = jsonPretty(payload);
+            } catch(e) {
+                document.getElementById('jwtDoctor').textContent = '(не удалось декодировать)';
+            }
+
+            log('[Jitsi] Врач подключён с ролью owner (модератор)', 'ok');
             setStep('step2', 'success');
             setStatus('Врач подключён к Jitsi (модератор)');
             document.getElementById('btnComplete').disabled = false;
         }
 
-        // ===== STEP 3: Patient connects =====
+        // ===== STEP 3 =====
         function patientConnect() {
             setStep('step3', 'active');
             setStatus('Пациент подключается...');
 
-            log('[EmAI] Push-уведомление → Мобильное приложение пациента', 'warn');
+            log('[EmAI] Push-уведомление отправлено пациенту', 'warn');
             log('[Приложение] Пациент видит: "Запись подтверждена, ссылка получена"', 'info');
-            log('[Приложение] Переход по ссылке (role=member)', 'ok');
 
             window.open(state.patientLink, '_blank');
 
+            document.getElementById('details3').innerHTML =
+                '<span class="method">Открыто в браузере (инкогнито):</span><br>' +
+                '<span class="url" style="word-break:break-all">' + state.patientLink + '</span><br><br>' +
+                '<span style="color:#94a3b8">JWT payload:</span><br>' +
+                '<pre style="color:#fbbf24" id="jwtPatient"></pre>';
+
+            try {
+                var token = state.patientLink.split('jwt=')[1];
+                var parts = token.split('.');
+                var payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                document.getElementById('jwtPatient').textContent = jsonPretty(payload);
+            } catch(e) {
+                document.getElementById('jwtPatient').textContent = '(не удалось декодировать)';
+            }
+
+            log('[Jitsi] Пациент подключён с ролью member (ограниченные права)', 'ok');
             setStep('step3', 'success');
-            setStatus('Пациент подключён (ограниченные права)');
+            setStatus('Пациент подключён');
         }
 
-        // ===== STEP 4: Complete =====
+        // ===== STEP 4 =====
         function completeConsultation() {
             setStep('step4', 'active');
             setStatus('Завершение консультации...');
 
-            log('[1С] POST → /?action=complete', 'warn');
+            log('[1С] Обработка "Видеоконсультация" → Завершить', 'info');
 
             var payload = {
                 sessionID: state.sessionId,
@@ -581,30 +581,26 @@
                 eventTime: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
             };
 
-            fetch(state.middlewareUrl + '/?action=complete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(function(r) { return r.json(); })
+            apiCall('complete', payload)
             .then(function(data) {
                 if (data.success) {
                     setStep('step4', 'success');
                     setStatus('Консультация завершена!');
+                    log('[Middleware] POST → EmAI/?action=complete', 'warn');
                     log('[EmAI] success=true, action=COMPLETE', 'ok');
                     log('[1С] РС → ПриемЗапланирован = Ложь, ПриемПроведен = Истина', 'ok');
-                    log('[1С] Документ «Запись на приём» → Статус: "Проведен"', 'ok');
 
                     document.getElementById('details4').innerHTML =
-                        '<span class="method">POST</span> <span class="url">' + getMiddlewareUrl() + '/?action=complete</span><br>' +
-                        '<pre style="margin-top:8px;color:#94a3b8">' + JSON.stringify(payload, null, 2) + '</pre>' +
+                        '<span class="method">POST</span> <span class="url">' + getBaseUrl() + '/?action=complete</span>' +
+                        '<div class="response" style="margin-top:8px"><div class="label">Запрос:</div>' +
+                        '<pre style="color:#94a3b8">' + jsonPretty(payload) + '</pre></div>' +
                         '<div class="response"><div class="label">Ответ:</div>' +
-                        '<pre style="color:#4ade80">' + JSON.stringify(data, null, 2) + '</pre></div>';
+                        '<pre style="color:#4ade80">' + jsonPretty(data) + '</pre></div>';
 
                     document.getElementById('btnComplete').disabled = true;
                 } else {
                     setStep('step4', 'error');
-                    setStatus('Ошибка завершения: ' + data.message);
+                    setStatus('Ошибка: ' + data.message);
                     log('[EmAI] ОШИБКА: ' + data.message, 'err');
                 }
             })
@@ -615,18 +611,21 @@
             });
         }
 
-        // ===== Reset =====
+        // ===== RESET =====
         function resetDemo() {
-            state.sessionId = '1C-DEMO-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            state.sessionId = generateSessionId();
             state.emaiSessionId = null;
             state.doctorLink = '';
             state.patientLink = '';
 
             ['step1','step2','step3','step4'].forEach(function(id) {
                 document.getElementById(id).className = 'step';
+                document.getElementById('details' + id.charAt(4)).innerHTML = '';
             });
 
             document.getElementById('details1').innerHTML = '';
+            document.getElementById('details2').innerHTML = '';
+            document.getElementById('details3').innerHTML = '';
             document.getElementById('details4').innerHTML = '';
 
             document.getElementById('btnStart').disabled = false;
@@ -636,8 +635,11 @@
             document.getElementById('btnComplete').disabled = true;
 
             setStatus('Ожидание запуска демо');
-            log('--- Демо сброшено ---', 'warn');
+            log('--- Демо сброшено. Новый sessionID: ' + state.sessionId + ' ---', 'warn');
         }
+
+        // Инициализация
+        state.sessionId = generateSessionId();
     </script>
 
 </body>
