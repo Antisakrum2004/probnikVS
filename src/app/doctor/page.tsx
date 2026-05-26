@@ -363,7 +363,7 @@ export default function DoctorPage() {
                           </div>
                           <div className="c1-grid-cell c1-grid-cell-actions" style={{ flex: '0 0 auto', minWidth: 220 }}>
                             <Link
-                              href={`/consultation/${room.id}?role=doctor`}
+                              href={`/video/${room.id}?role=doctor`}
                               className="c1-btn-action c1-btn-action-blue"
                               style={{ textDecoration: 'none' }}
                             >

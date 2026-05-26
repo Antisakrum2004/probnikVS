@@ -209,7 +209,7 @@ function PatientContent({ roomId, searchParams }: { roomId: string; searchParams
 
           {/* Connect Button */}
           <Link
-            href={`/consultation/${room.id}?role=patient`}
+            href={`/video/${room.id}?role=patient`}
             className="c1-patient-btn"
             style={{ textDecoration: 'none', display: 'flex', marginBottom: 12 }}
           >
