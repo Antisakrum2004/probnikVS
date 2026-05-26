@@ -1,0 +1,183 @@
+version: '3.8'
+
+services:
+    # ============================================
+    #  Nginx Reverse Proxy (SSL termination)
+    # ============================================
+    nginx:
+        image: nginx:alpine
+        container_name: jitsi-nginx
+        restart: ${RESTART_POLICY:-unless-stopped}
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx/ssl:/etc/nginx/ssl:ro
+            - ./nginx/logs:/var/log/nginx
+        depends_on:
+            - web
+        networks:
+            - meet.jitsi
+
+    # ============================================
+    #  Jitsi Meet Web UI
+    # ============================================
+    web:
+        image: jitsi/web:${JITSI_IMAGE_VERSION:-stable}
+        container_name: jitsi-web
+        restart: ${RESTART_POLICY:-unless-stopped}
+        volumes:
+            - ${CONFIG}/web:/config:Z
+            - ${CONFIG}/web/crontabs:/var/spool/cron/crontabs:Z
+            - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
+        networks:
+            - meet.jitsi
+        environment:
+            - ENABLE_AUTH
+            - ENABLE_GUESTS
+            - AUTH_TYPE
+            - JWT_APP_ID
+            - JWT_APP_SECRET
+            - JWT_ACCEPTED_ISSUERS
+            - JWT_ACCEPTED_AUDIENCES
+            - JWT_ALLOW_EMPTY
+            - JWT_AUTH_TYPE
+            - TOKEN_AUTH_URL
+            - PUBLIC_URL
+            - XMPP_DOMAIN
+            - XMPP_AUTH_DOMAIN
+            - XMPP_BOSH_URL_BASE
+            - XMPP_MUC_DOMAIN
+            - XMPP_INTERNAL_MUC_DOMAIN
+            - JICOFO_COMPONENT_SECRET
+            - TZ=Asia/Almaty
+
+    # ============================================
+    #  Prosody (XMPP сервер)
+    # ============================================
+    prosody:
+        image: jitsi/prosody:${JITSI_IMAGE_VERSION:-stable}
+        container_name: jitsi-prosody
+        restart: ${RESTART_POLICY:-unless-stopped}
+        volumes:
+            - ${CONFIG}/prosody/config:/config:Z
+            - ${CONFIG}/prosody/prosody-plugins-custom:/prosody-plugins-custom:Z
+        networks:
+            - meet.jitsi
+        environment:
+            - AUTH_TYPE
+            - ENABLE_AUTH
+            - ENABLE_GUESTS
+            - JWT_APP_ID
+            - JWT_APP_SECRET
+            - JWT_ACCEPTED_ISSUERS
+            - JWT_ACCEPTED_AUDIENCES
+            - JWT_ALLOW_EMPTY
+            - JWT_AUTH_TYPE
+            - JWT_ASAP_KEYSERVER
+            - JWT_TOKEN_AUTH_INCLUDE_SUB
+            - GLOBAL_MODULES
+            - GLOBAL_CONFIG
+            - LDAP_URL
+            - LDAP_BASE
+            - LDAP_BINDDN
+            - LDAP_BINDPW
+            - LDAP_FILTER
+            - LDAP_AUTH_METHOD
+            - LDAP_VERSION
+            - LDAP_USE_TLS
+            - LDAP_TLS_CIPHERS
+            - LDAP_TLS_CHECK_PEER
+            - LDAP_TLS_CACERT_FILE
+            - LDAP_TLS_CACERT_DIR
+            - LDAP_START_TLS
+            - XMPP_DOMAIN
+            - XMPP_AUTH_DOMAIN
+            - XMPP_GUEST_DOMAIN
+            - XMPP_MUC_DOMAIN
+            - XMPP_INTERNAL_MUC_DOMAIN
+            - XMPP_MODULES
+            - XMPP_RECORDER_DOMAIN
+            - JICOFO_COMPONENT_SECRET
+            - JVB_AUTH_USER
+            - JVB_AUTH_PASSWORD
+            - TZ=Asia/Almaty
+
+    # ============================================
+    #  Jicofo (Jitsi Conference Focus)
+    # ============================================
+    jicofo:
+        image: jitsi/jicofo:${JITSI_IMAGE_VERSION:-stable}
+        container_name: jitsi-jicofo
+        restart: ${RESTART_POLICY:-unless-stopped}
+        volumes:
+            - ${CONFIG}/jicofo:/config:Z
+        networks:
+            - meet.jitsi
+        depends_on:
+            - prosody
+        environment:
+            - AUTH_TYPE
+            - ENABLE_AUTH
+            - XMPP_DOMAIN
+            - XMPP_AUTH_DOMAIN
+            - XMPP_INTERNAL_MUC_DOMAIN
+            - XMPP_MUC_DOMAIN
+            - XMPP_SERVER
+            - JICOFO_COMPONENT_SECRET
+            - JICOFO_AUTH_USER
+            - JICOFO_AUTH_PASSWORD
+            - TZ=Asia/Almaty
+
+    # ============================================
+    #  Jitsi Videobridge
+    # ============================================
+    jvb:
+        image: jitsi/jvb:${JITSI_IMAGE_VERSION:-stable}
+        container_name: jitsi-jvb
+        restart: ${RESTART_POLICY:-unless-stopped}
+        ports:
+            - '${JVB_PORT:-10000}:${JVB_PORT:-10000}/udp'
+            - '4443:4443'
+        volumes:
+            - ${CONFIG}/jvb:/config:Z
+        networks:
+            - meet.jitsi
+        depends_on:
+            - prosody
+        environment:
+            - XMPP_DOMAIN
+            - XMPP_AUTH_DOMAIN
+            - XMPP_INTERNAL_MUC_DOMAIN
+            - XMPP_SERVER
+            - JVB_AUTH_USER
+            - JVB_AUTH_PASSWORD
+            - JVB_STUN_SERVERS
+            - JVB_PORT
+            - JVB_ADVERTISE_IPS
+            - TZ=Asia/Almaty
+
+    # ============================================
+    #  PHP Middleware (token-api + EmAI proxy)
+    # ============================================
+    token-api:
+        image: php:8.2-apache
+        container_name: jitsi-token-api
+        restart: ${RESTART_POLICY:-unless-stopped}
+        networks:
+            - meet.jitsi
+        ports:
+            - '58080:80'
+        volumes:
+            - ./token-api:/var/www/html
+        environment:
+            - EMAI_API_URL=${EMAI_API_URL}
+            - EMAI_API_KEY=${EMAI_API_KEY}
+            - JITSI_APP_ID=${JWT_APP_ID}
+            - JITSI_APP_SECRET=${JWT_APP_SECRET}
+            - JITSI_DOMAIN=${PUBLIC_URL#https://}
+
+networks:
+    meet.jitsi:
+        driver: bridge
