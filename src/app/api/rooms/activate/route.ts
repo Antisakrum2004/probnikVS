@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRoom, cancelRoom, callEmAIEvent } from '@/lib/store';
+import { activateRoom, getRoom } from '@/lib/store';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,20 +13,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const room = getRoom(roomId);
-    if (!room) {
+    const existing = getRoom(roomId);
+    if (!existing) {
       return NextResponse.json(
         { success: false, error: 'Комната не найдена' },
         { status: 404 }
       );
     }
 
-    // Call EmAI event CANCEL
-    await callEmAIEvent(room, 'CANCEL', 'Отменено врачом через АРМ');
+    if (existing.status === 'completed' || existing.status === 'cancelled') {
+      return NextResponse.json({
+        success: true,
+        room: existing,
+        message: `Комната в статусе: ${existing.status}`,
+      });
+    }
 
-    const cancelled = cancelRoom(roomId);
+    const room = activateRoom(roomId);
 
-    return NextResponse.json({ success: true, room: cancelled });
+    return NextResponse.json({ success: true, room });
   } catch {
     return NextResponse.json(
       { success: false, error: 'Ошибка сервера' },

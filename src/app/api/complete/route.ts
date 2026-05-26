@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { completeRoom, getRoom } from '@/lib/store';
+import { getRoom, completeRoom, callEmAIEvent } from '@/lib/store';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,14 +13,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const room = getRoom(roomId) || completeRoom(roomId);
-
+    const room = getRoom(roomId);
     if (!room) {
       return NextResponse.json(
         { success: false, error: 'Комната не найдена' },
         { status: 404 }
       );
     }
+
+    // Call EmAI event COMPLETE
+    await callEmAIEvent(room, 'COMPLETE');
 
     const completed = completeRoom(roomId);
 

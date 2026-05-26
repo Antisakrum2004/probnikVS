@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getActiveRooms } from '@/lib/store';
+import { getAllRooms } from '@/lib/store';
 
 export async function GET() {
   try {
-    const rooms = getActiveRooms();
+    const rooms = getAllRooms();
     return NextResponse.json({ success: true, rooms });
   } catch {
     return NextResponse.json(

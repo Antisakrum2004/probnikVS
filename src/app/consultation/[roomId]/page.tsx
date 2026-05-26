@@ -28,16 +28,17 @@ type JitsiApi = any;
 function ConsultationContent({ roomId }: { roomId: string }) {
   const searchParams = useSearchParams();
   const role = searchParams.get('role') || 'patient';
-  const patientNameParam = searchParams.get('name') || '';
 
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [completed, setCompleted] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
   const [completing, setCompleting] = useState(false);
   const apiRef = useRef<JitsiApi>(null);
+  const activatedRef = useRef(false);
 
-  const displayName = role === 'doctor' ? room?.doctorName : (patientNameParam || room?.patientName);
+  const displayName = role === 'doctor' ? room?.doctorName : room?.patientName;
 
   useEffect(() => {
     let cancelled = false;
@@ -50,26 +51,39 @@ function ConsultationContent({ roomId }: { roomId: string }) {
           const data = await res.json();
           if (cancelled) return;
           setRoom(data.room);
+
           if (data.room.status === 'completed') {
             setCompleted(true);
+          } else if (data.room.status === 'cancelled') {
+            setCancelled(true);
           }
         } else {
           setError('Консультация не найдена');
         }
       } catch {
-        if (!cancelled) {
-          setError('Ошибка загрузки данных');
-        }
+        if (!cancelled) setError('Ошибка загрузки данных');
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadRoom();
     return () => { cancelled = true; };
   }, [roomId]);
+
+  // Activate room when someone joins
+  useEffect(() => {
+    if (room && !activatedRef.current && (room.status === 'waiting' || room.status === 'active')) {
+      activatedRef.current = true;
+      fetch('/api/rooms/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId }),
+      }).catch(() => {
+        // ignore activation errors
+      });
+    }
+  }, [room, roomId]);
 
   const handleComplete = async () => {
     setCompleting(true);
@@ -111,11 +125,11 @@ function ConsultationContent({ roomId }: { roomId: string }) {
           <div className="text-5xl">⚠️</div>
           <h2 className="text-xl font-bold text-white">{error}</h2>
           <p className="text-slate-400 text-sm">
-            Проверьте код консультации и попробуйте снова
+            Проверьте ссылку и попробуйте снова
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm"
+            className="inline-block px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg transition-colors"
           >
             На главную
           </Link>
@@ -131,7 +145,7 @@ function ConsultationContent({ roomId }: { roomId: string }) {
           <div className="text-5xl">✅</div>
           <h2 className="text-xl font-bold text-white">Консультация завершена</h2>
           <p className="text-slate-400 text-sm">
-            Видеоконсультация была успешно завершена врачом.
+            Видеоконсультация была успешно завершена.
           </p>
           {room?.completedAt && (
             <p className="text-slate-500 text-xs">
@@ -139,8 +153,28 @@ function ConsultationContent({ roomId }: { roomId: string }) {
             </p>
           )}
           <Link
+            href={role === 'doctor' ? '/doctor' : '/'}
+            className="inline-block px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg transition-colors"
+          >
+            {role === 'doctor' ? 'Вернуться в АРМ' : 'На главную'}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (cancelled) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
+        <div className="text-center space-y-4 max-w-md">
+          <div className="text-5xl">🚫</div>
+          <h2 className="text-xl font-bold text-white">Консультация отменена</h2>
+          <p className="text-slate-400 text-sm">
+            Данная видеоконсультация была отменена.
+          </p>
+          <Link
             href="/"
-            className="inline-block px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm"
+            className="inline-block px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg transition-colors"
           >
             На главную
           </Link>
@@ -152,15 +186,15 @@ function ConsultationContent({ roomId }: { roomId: string }) {
   return (
     <div className="h-screen flex flex-col bg-slate-950">
       {/* Compact Header */}
-      <header className="shrink-0 h-12 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-4">
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-lg">
+      <header className="shrink-0 h-11 border-b border-slate-800 bg-slate-900 flex items-center justify-between px-3 z-20">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-base">
             {role === 'doctor' ? '👨‍⚕️' : '📱'}
           </span>
-          <h1 className="text-sm font-medium text-white truncate">
-            Консультация: {room?.roomName}
+          <h1 className="text-xs font-medium text-white truncate">
+            {room?.roomName}
           </h1>
-          <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${
+          <span className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded font-medium ${
             role === 'doctor'
               ? 'bg-emerald-500/20 text-emerald-400'
               : 'bg-sky-500/20 text-sky-400'
@@ -171,13 +205,15 @@ function ConsultationContent({ roomId }: { roomId: string }) {
         <div className="flex items-center gap-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-slate-500 hidden sm:inline">Активна</span>
+            <span className="text-[10px] text-slate-500 hidden sm:inline">
+              {room?.status === 'active' ? 'Активна' : 'Подключение...'}
+            </span>
           </div>
         </div>
       </header>
 
       {/* Jitsi Container */}
-      <div className="flex-1 relative" style={{ height: 'calc(100vh - 48px)' }}>
+      <div className="flex-1 relative" style={{ height: 'calc(100vh - 44px)' }}>
         {room && (
           <JitsiMeeting
             roomName={room.roomName}
@@ -215,13 +251,13 @@ function ConsultationContent({ roomId }: { roomId: string }) {
           />
         )}
 
-        {/* Complete Button - only for doctor */}
+        {/* Complete Button — only for doctor */}
         {role === 'doctor' && (
-          <div className="absolute bottom-6 right-6 z-50">
+          <div className="absolute bottom-5 right-5 z-50">
             <button
               onClick={handleComplete}
               disabled={completing}
-              className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white font-medium rounded-xl shadow-lg shadow-red-500/30 transition-all hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-500 disabled:bg-red-800 text-white font-medium rounded-xl shadow-lg shadow-red-500/30 transition-all hover:scale-105 active:scale-95 text-sm"
             >
               {completing ? (
                 <>
@@ -236,7 +272,7 @@ function ConsultationContent({ roomId }: { roomId: string }) {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
                   </svg>
-                  Завершить
+                  Завершить консультацию
                 </>
               )}
             </button>
