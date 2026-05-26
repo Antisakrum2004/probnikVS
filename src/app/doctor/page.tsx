@@ -4,6 +4,18 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import type { Room, ApiLogEntry } from '@/lib/types';
 
+/* Version display hook */
+function useVersion() {
+  const [version, setVersion] = useState('');
+  useEffect(() => {
+    fetch('/api/version')
+      .then(r => r.json())
+      .then(d => setVersion(d.version))
+      .catch(() => setVersion('?.?.?'));
+  }, []);
+  return version;
+}
+
 /* SVG Icons */
 function IconGrid() {
   return (
@@ -94,6 +106,7 @@ function StatusIndicator({ status }: { status: string }) {
 }
 
 export default function DoctorPage() {
+  const version = useVersion();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [logs, setLogs] = useState<ApiLogEntry[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -504,7 +517,7 @@ export default function DoctorPage() {
                 Консультаций: {activeRooms.length} активных, {archiveRooms.length} в архиве
               </span>
             </div>
-            <span>{new Date().toLocaleTimeString('ru-RU')}</span>
+            <span>v{version} | {new Date().toLocaleTimeString('ru-RU')}</span>
           </div>
         </div>
       </div>

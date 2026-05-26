@@ -4,6 +4,18 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import type { Room, ApiLogEntry } from '@/lib/types';
 
+/* Version display hook */
+function useVersion() {
+  const [version, setVersion] = useState('');
+  useEffect(() => {
+    fetch('/api/version')
+      .then(r => r.json())
+      .then(d => setVersion(d.version))
+      .catch(() => setVersion('?.?.?'));
+  }, []);
+  return version;
+}
+
 /* SVG Icons — 1C Navigation */
 function IconGrid() {
   return (
@@ -100,6 +112,7 @@ function IconVideo() {
 }
 
 export default function HomePage() {
+  const version = useVersion();
   const [doctorName, setDoctorName] = useState('Доктор Петров П.П.');
   const [patientName, setPatientName] = useState('Иванов И.И.');
   const [patientId, setPatientId] = useState('22233');
@@ -536,7 +549,7 @@ export default function HomePage() {
               <span className={`c1-status-dot ${createdRoom ? 'c1-status-dot-green' : 'c1-status-dot-gray'}`} />
               <span>{createdRoom ? 'Документ проведён' : 'Новый документ'}</span>
             </div>
-            <span>Платформа: Jitsi Meet (демо)</span>
+            <span>v{version} | Jitsi Meet (демо)</span>
           </div>
         </div>
       </div>
