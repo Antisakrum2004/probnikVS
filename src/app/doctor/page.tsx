@@ -4,12 +4,94 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import type { Room, ApiLogEntry } from '@/lib/types';
 
-const STATUS_CONFIG = {
-  waiting: { label: 'Ожидание', color: 'bg-amber-100 text-amber-800 border-amber-300', dot: 'bg-amber-500' },
-  active: { label: 'Активна', color: 'bg-green-100 text-green-800 border-green-300', dot: 'bg-green-500' },
-  completed: { label: 'Завершена', color: 'bg-slate-100 text-slate-600 border-slate-300', dot: 'bg-slate-400' },
-  cancelled: { label: 'Отменена', color: 'bg-red-100 text-red-700 border-red-300', dot: 'bg-red-500' },
-};
+/* SVG Icons */
+function IconGrid() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <rect x="1" y="1" width="7" height="7" />
+      <rect x="12" y="1" width="7" height="7" />
+      <rect x="1" y="12" width="7" height="7" />
+      <rect x="12" y="12" width="7" height="7" />
+    </svg>
+  );
+}
+
+function IconBook() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="2" width="14" height="16" />
+      <line x1="7" y1="2" x2="7" y2="18" />
+      <line x1="10" y1="6" x2="15" y2="6" />
+      <line x1="10" y1="9" x2="15" y2="9" />
+      <line x1="10" y1="12" x2="15" y2="12" />
+    </svg>
+  );
+}
+
+function IconList() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <line x1="5" y1="4" x2="17" y2="4" />
+      <line x1="5" y1="10" x2="17" y2="10" />
+      <line x1="5" y1="16" x2="17" y2="16" />
+      <circle cx="2" cy="4" r="1" fill="currentColor" />
+      <circle cx="2" cy="10" r="1" fill="currentColor" />
+      <circle cx="2" cy="16" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconChart() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="2" y="12" width="3" height="6" fill="currentColor" />
+      <rect x="7" y="8" width="3" height="10" fill="currentColor" />
+      <rect x="12" y="4" width="3" height="14" fill="currentColor" />
+      <rect x="17" y="1" width="3" height="17" fill="currentColor" />
+    </svg>
+  );
+}
+
+function Logo1C() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" style={{ width: 16, height: 16, flexShrink: 0 }}>
+      <rect width="16" height="16" rx="1" fill="#2B5879" />
+      <text x="3" y="12" fontSize="10" fontWeight="bold" fill="white" fontFamily="Arial, sans-serif">1C</text>
+    </svg>
+  );
+}
+
+function ArrowDown() {
+  return (
+    <svg className="c1-group-arrow" viewBox="0 0 9 9" fill="currentColor">
+      <path d="M1 3L4.5 7L8 3H1Z" />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg className="c1-group-arrow" viewBox="0 0 9 9" fill="currentColor">
+      <path d="M3 1L7 4.5L3 8V1Z" />
+    </svg>
+  );
+}
+
+function StatusIndicator({ status }: { status: string }) {
+  const cfg: Record<string, { label: string; cls: string }> = {
+    waiting: { label: 'Ожидание', cls: 'c1-status-waiting' },
+    active: { label: 'Активна', cls: 'c1-status-active' },
+    completed: { label: 'Завершена', cls: 'c1-status-completed' },
+    cancelled: { label: 'Отменена', cls: 'c1-status-cancelled' },
+  };
+  const c = cfg[status] || cfg.waiting;
+  return (
+    <span className={`c1-status-indicator ${c.cls}`}>
+      <span className={`c1-status-dot-sm ${status === 'waiting' ? 'c1-pulse' : ''}`} />
+      {c.label}
+    </span>
+  );
+}
 
 export default function DoctorPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -127,296 +209,304 @@ export default function DoctorPage() {
   const archiveRooms = rooms.filter((r) => r.status === 'completed' || r.status === 'cancelled');
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* 1C Title Bar */}
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="text-slate-500 hover:text-slate-700 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      {/* ===== Title Bar ===== */}
+      <div className="c1-title-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', color: '#666', textDecoration: 'none', marginRight: 2 }}>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 12, height: 12 }}>
+              <path d="M9 2L3 7L9 12" />
             </svg>
           </Link>
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 bg-blue-600 rounded-sm flex items-center justify-center">
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-slate-800">АРМ Врача</span>
-          </div>
-          <span className="text-slate-400">|</span>
-          <span className="text-sm text-slate-700">Видеоконсультации</span>
+          <Logo1C />
+          <span className="c1-title-bar-text">1С:МИС</span>
+          <span className="c1-title-bar-separator">|</span>
+          <span className="c1-title-bar-active">АРМ Врача — Видеоконсультации</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-slate-500 hidden sm:inline">Автообновление</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span className="c1-status-dot-sm c1-pulse" style={{ background: '#4CAF50' }} />
+          <span className="c1-title-bar-muted">Автообновление</span>
         </div>
       </div>
 
-      {/* Command Toolbar */}
-      <div className="bg-slate-100 border-b border-slate-300 px-3 py-1.5 flex items-center gap-2 shrink-0">
-        <button
-          onClick={() => { fetchRooms(); fetchLogs(); }}
-          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 rounded-sm px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Обновить
-        </button>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 rounded-sm px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Новая запись
-        </Link>
-      </div>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto py-4 px-4 space-y-4">
-          {/* Error */}
-          {actionError && (
-            <div className="bg-red-50 border border-red-300 rounded-sm px-4 py-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-sm text-red-800">{actionError}</span>
-              </div>
-              <button onClick={() => setActionError('')} className="text-red-400 hover:text-red-600">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          )}
-
-          {/* Section: Список консультаций */}
-          <div className="border border-slate-300 rounded-sm bg-white">
-            <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300 flex items-center justify-between">
-              <span>Список консультаций</span>
-              {activeRooms.length > 0 && (
-                <span className="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded-sm font-bold normal-case tracking-normal">
-                  {activeRooms.length} активно
-                </span>
-              )}
-            </div>
-
-            {!loaded ? (
-              <div className="p-8 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs text-slate-500">Загрузка данных...</span>
-              </div>
-            ) : activeRooms.length === 0 ? (
-              <div className="p-8 text-center">
-                <p className="text-xs text-slate-400">Нет активных консультаций</p>
-                <p className="text-xs text-slate-300 mt-1">Создайте запись на приём на главной странице</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-slate-200">
-                {activeRooms.map((room) => {
-                  const statusCfg = STATUS_CONFIG[room.status];
-                  return (
-                    <div key={room.id} className="p-4 hover:bg-slate-50 transition-colors">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-sm font-medium text-slate-800">{room.patientName}</span>
-                            <span className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm border font-bold ${statusCfg.color}`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} ${room.status === 'waiting' ? 'animate-pulse' : ''}`} />
-                              {statusCfg.label}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
-                            <span>Врач: {room.doctorName}</span>
-                            <span className="text-slate-300">|</span>
-                            <span>{new Date(room.createdAt).toLocaleTimeString('ru-RU')}</span>
-                            {room.emaiSessionId && (
-                              <>
-                                <span className="text-slate-300">|</span>
-                                <span className="font-mono text-[10px] text-slate-400">EmAI: {room.emaiSessionId.substring(0, 12)}...</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Link
-                            href={`/consultation/${room.id}?role=doctor`}
-                            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-sm px-3 py-1.5 transition-colors"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            Подключиться
-                          </Link>
-
-                          <button
-                            onClick={() => handleComplete(room.id)}
-                            disabled={completingId === room.id}
-                            className="inline-flex items-center gap-1.5 bg-orange-100 border border-orange-300 hover:bg-orange-200 text-orange-700 text-xs font-medium rounded-sm px-3 py-1.5 transition-colors disabled:opacity-50"
-                          >
-                            {completingId === room.id ? (
-                              <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                              </svg>
-                            ) : (
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
-                            Завершить
-                          </button>
-
-                          {cancelConfirmId === room.id ? (
-                            <div className="flex items-center gap-1">
-                              <button
-                                onClick={() => handleCancel(room.id)}
-                                className="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-sm transition-colors"
-                              >
-                                Подтвердить
-                              </button>
-                              <button
-                                onClick={() => setCancelConfirmId(null)}
-                                className="px-2.5 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-600 text-xs rounded-sm transition-colors"
-                              >
-                                Отмена
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setCancelConfirmId(room.id)}
-                              className="inline-flex items-center gap-1.5 bg-red-50 border border-red-300 hover:bg-red-100 text-red-600 text-xs font-medium rounded-sm px-3 py-1.5 transition-colors"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                              Отменить
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* ===== Navigation Panel ===== */}
+        <div className="c1-nav-panel">
+          <div className="c1-nav-btn" title="Разделы">
+            <IconGrid />
           </div>
+          <div className="c1-nav-btn" title="Справочники">
+            <IconBook />
+          </div>
+          <div className="c1-nav-btn active" title="Документы">
+            <IconList />
+          </div>
+          <div className="c1-nav-btn" title="Отчёты">
+            <IconChart />
+          </div>
+        </div>
 
-          {/* Section: Архив */}
-          {archiveRooms.length > 0 && (
-            <div className="border border-slate-300 rounded-sm bg-white">
-              <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300 flex items-center justify-between">
-                <span>Архив</span>
-                <span className="bg-slate-400 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold normal-case tracking-normal">
-                  {archiveRooms.length}
-                </span>
-              </div>
-              <div className="divide-y divide-slate-200">
-                {archiveRooms.map((room) => {
-                  const statusCfg = STATUS_CONFIG[room.status];
-                  return (
-                    <div key={room.id} className="px-4 py-3 opacity-60 hover:opacity-80 transition-opacity">
-                      <div className="flex items-center gap-3 flex-wrap text-xs">
-                        <span className="font-medium text-slate-600">{room.patientName}</span>
-                        <span className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-sm border font-bold ${statusCfg.color}`}>
-                          {statusCfg.label}
-                        </span>
-                        <span className="text-slate-400">← {room.doctorName}</span>
-                        <span className="text-slate-300 ml-auto font-mono text-[10px]">
-                          {new Date(room.createdAt).toLocaleTimeString('ru-RU')}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Collapsible: Журнал обмена с EmAI */}
-          <div className="border border-slate-300 rounded-sm bg-white overflow-hidden">
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+          {/* ===== Command Toolbar ===== */}
+          <div className="c1-toolbar">
             <button
-              onClick={() => { setShowLogs(!showLogs); if (!showLogs) fetchLogs(); }}
-              className="w-full flex items-center justify-between px-4 py-2 bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider hover:bg-slate-300 transition-colors"
+              className="c1-toolbar-btn"
+              onClick={() => { fetchRooms(); fetchLogs(); }}
             >
-              <div className="flex items-center gap-2">
-                <span>Журнал обмена с EmAI</span>
-                <span className="bg-slate-400 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-bold normal-case tracking-normal">
-                  {logs.length}
-                </span>
-              </div>
-              <svg
-                className={`w-3.5 h-3.5 text-slate-500 transition-transform ${showLogs ? 'rotate-180' : ''}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M1 7a6 6 0 0111.3-2.8M13 7a6 6 0 01-11.3 2.8" />
+                <path d="M13 4v3h-3M1 10v-3h3" />
               </svg>
+              Обновить
             </button>
-
-            {showLogs && (
-              <div className="border-t border-slate-300 max-h-80 overflow-y-auto">
-                {logs.length === 0 ? (
-                  <div className="p-6 text-center text-slate-400 text-xs">Записи отсутствуют</div>
-                ) : (
-                  <div className="divide-y divide-slate-200">
-                    {logs.map((log, i) => (
-                      <div key={i} className="p-3 hover:bg-slate-50 transition-colors">
-                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-bold ${
-                            log.direction === 'request'
-                              ? 'bg-blue-100 text-blue-700'
-                              : log.status && log.status >= 400
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-green-100 text-green-700'
-                          }`}>
-                            {log.direction === 'request' ? 'ЗАПРОС' : 'ОТВЕТ'}
-                          </span>
-                          <span className="text-xs text-slate-500 font-mono">{log.endpoint}</span>
-                          {log.status && (
-                            <span className="text-xs text-slate-400 font-mono">[{log.status}]</span>
-                          )}
-                          {log.duration && (
-                            <span className="text-xs text-slate-400 font-mono">{log.duration}ms</span>
-                          )}
-                          <span className="text-xs text-slate-400 ml-auto">
-                            {new Date(log.timestamp).toLocaleTimeString('ru-RU')}
-                          </span>
-                        </div>
-                        <pre className="text-[11px] text-slate-600 bg-slate-100 rounded-sm p-2 overflow-x-auto max-h-32 font-mono leading-relaxed border border-slate-200">
-                          {log.payload}
-                        </pre>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div ref={logsEndRef} />
-              </div>
+            <Link href="/" className="c1-toolbar-btn" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="7" y1="1" x2="7" y2="13" />
+                <line x1="1" y1="7" x2="13" y2="7" />
+              </svg>
+              Новая запись
+            </Link>
+            <div style={{ flex: 1 }} />
+            {activeRooms.length > 0 && (
+              <span style={{ fontSize: 11, color: '#2B5879', fontWeight: 600 }}>
+                {activeRooms.length} активно
+              </span>
             )}
           </div>
 
-          <div className="h-4" />
-        </div>
-      </main>
+          {/* ===== Form Area ===== */}
+          <div className="c1-form-area" style={{ padding: 0 }}>
+            <div style={{ maxWidth: 960, margin: '0 auto' }}>
 
-      {/* Status Bar */}
-      <div className="bg-amber-50 border-t border-amber-200 px-4 py-1.5 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-slate-600">
-            Консультаций: {activeRooms.length} активных, {archiveRooms.length} в архиве
-          </span>
+              {/* Error */}
+              {actionError && (
+                <div className="c1-notification c1-notification-error" style={{ margin: 6 }}>
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14, flexShrink: 0 }}>
+                    <circle cx="7" cy="7" r="6" />
+                    <line x1="7" y1="4" x2="7" y2="8" />
+                    <circle cx="7" cy="10.5" r="0.5" fill="currentColor" />
+                  </svg>
+                  <span style={{ flex: 1 }}>{actionError}</span>
+                  <button onClick={() => setActionError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C62828', padding: '0 2px' }}>
+                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 12, height: 12 }}>
+                      <line x1="3" y1="3" x2="11" y2="11" />
+                      <line x1="11" y1="3" x2="3" y2="11" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {/* Active Consultations — 1C Dynamic List */}
+              <div className="c1-group" style={{ margin: 6, marginBottom: 2 }}>
+                <div className="c1-group-header">
+                  <ArrowDown />
+                  <span className="c1-group-title">Список консультаций</span>
+                  {activeRooms.length > 0 && (
+                    <span className="c1-group-badge" style={{ background: '#2B5879' }}>{activeRooms.length}</span>
+                  )}
+                </div>
+                <div className="c1-group-body" style={{ padding: 0 }}>
+                  {!loaded ? (
+                    <div className="c1-empty-state" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      <span className="c1-spinner" />
+                      Загрузка данных...
+                    </div>
+                  ) : activeRooms.length === 0 ? (
+                    <div className="c1-empty-state">
+                      Нет активных консультаций. Создайте запись на приём на главной странице.
+                    </div>
+                  ) : (
+                    <div className="c1-grid-wrapper">
+                      {/* Grid Header */}
+                      <div className="c1-grid-header-row">
+                        <div className="c1-grid-header-cell" style={{ flex: '2 1 0', minWidth: 140 }}>Пациент</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '2 1 0', minWidth: 140 }}>Врач</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 100 }}>Дата</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 90 }}>Статус</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 100 }}>EmAI Session</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '0 0 auto', minWidth: 220 }}>Действия</div>
+                      </div>
+
+                      {/* Grid Rows */}
+                      {activeRooms.map((room) => (
+                        <div key={room.id} className="c1-grid-row">
+                          <div className="c1-grid-cell" style={{ flex: '2 1 0', minWidth: 140 }}>
+                            {room.patientName}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '2 1 0', minWidth: 140 }}>
+                            {room.doctorName}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '1 1 0', minWidth: 100, fontSize: 12 }}>
+                            {new Date(room.createdAt).toLocaleString('ru-RU', {
+                              day: '2-digit', month: '2-digit', year: '2-digit',
+                              hour: '2-digit', minute: '2-digit',
+                            })}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '1 1 0', minWidth: 90 }}>
+                            <StatusIndicator status={room.status} />
+                          </div>
+                          <div className="c1-grid-cell c1-grid-cell-mono" style={{ flex: '1 1 0', minWidth: 100 }}>
+                            {room.emaiSessionId ? room.emaiSessionId.substring(0, 16) : '—'}
+                          </div>
+                          <div className="c1-grid-cell c1-grid-cell-actions" style={{ flex: '0 0 auto', minWidth: 220 }}>
+                            <Link
+                              href={`/consultation/${room.id}?role=doctor`}
+                              className="c1-btn-action c1-btn-action-blue"
+                              style={{ textDecoration: 'none' }}
+                            >
+                              Подключиться
+                            </Link>
+                            <button
+                              onClick={() => handleComplete(room.id)}
+                              disabled={completingId === room.id}
+                              className="c1-btn-action c1-btn-action-orange"
+                            >
+                              {completingId === room.id ? (
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                                  <span className="c1-spinner" style={{ width: 10, height: 10, borderWidth: 2 }} />
+                                  Завершить
+                                </span>
+                              ) : 'Завершить'}
+                            </button>
+                            {cancelConfirmId === room.id ? (
+                              <>
+                                <button
+                                  onClick={() => handleCancel(room.id)}
+                                  className="c1-btn-action c1-btn-action-red"
+                                >
+                                  Подтвердить
+                                </button>
+                                <button
+                                  onClick={() => setCancelConfirmId(null)}
+                                  className="c1-btn-action c1-btn-action-gray"
+                                >
+                                  Отмена
+                                </button>
+                              </>
+                            ) : (
+                              <button
+                                onClick={() => setCancelConfirmId(room.id)}
+                                className="c1-btn-action c1-btn-action-red"
+                              >
+                                Отменить
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Archive */}
+              {archiveRooms.length > 0 && (
+                <div className="c1-group" style={{ margin: 6, marginBottom: 2 }}>
+                  <div className="c1-group-header">
+                    <ArrowDown />
+                    <span className="c1-group-title">Архив</span>
+                    <span className="c1-group-badge">{archiveRooms.length}</span>
+                  </div>
+                  <div className="c1-group-body" style={{ padding: 0 }}>
+                    <div className="c1-grid-wrapper">
+                      <div className="c1-grid-header-row">
+                        <div className="c1-grid-header-cell" style={{ flex: '2 1 0', minWidth: 140 }}>Пациент</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '2 1 0', minWidth: 140 }}>Врач</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 100 }}>Дата</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 90 }}>Статус</div>
+                        <div className="c1-grid-header-cell" style={{ flex: '1 1 0', minWidth: 100 }}>EmAI Session</div>
+                      </div>
+                      {archiveRooms.map((room) => (
+                        <div key={room.id} className="c1-grid-row c1-grid-row-archive">
+                          <div className="c1-grid-cell" style={{ flex: '2 1 0', minWidth: 140 }}>
+                            {room.patientName}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '2 1 0', minWidth: 140 }}>
+                            {room.doctorName}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '1 1 0', minWidth: 100, fontSize: 12 }}>
+                            {new Date(room.createdAt).toLocaleString('ru-RU', {
+                              day: '2-digit', month: '2-digit', year: '2-digit',
+                              hour: '2-digit', minute: '2-digit',
+                            })}
+                          </div>
+                          <div className="c1-grid-cell" style={{ flex: '1 1 0', minWidth: 90 }}>
+                            <StatusIndicator status={room.status} />
+                          </div>
+                          <div className="c1-grid-cell c1-grid-cell-mono" style={{ flex: '1 1 0', minWidth: 100 }}>
+                            {room.emaiSessionId ? room.emaiSessionId.substring(0, 16) : '—'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Log Section */}
+              <div className="c1-group" style={{ margin: 6 }}>
+                <div
+                  className="c1-group-header"
+                  onClick={() => { setShowLogs(!showLogs); if (!showLogs) fetchLogs(); }}
+                >
+                  {showLogs ? <ArrowDown /> : <ArrowRight />}
+                  <span className="c1-group-title">Журнал обмена с EmAI</span>
+                  <span className="c1-group-badge">{logs.length}</span>
+                </div>
+                <div className={`c1-group-body ${showLogs ? '' : 'c1-group-body-collapsed'}`} style={{ padding: 0 }}>
+                  {showLogs && (
+                    <div style={{ maxHeight: 320, overflowY: 'auto' }}>
+                      {logs.length === 0 ? (
+                        <div className="c1-empty-state">Записи отсутствуют</div>
+                      ) : (
+                        logs.map((log, i) => (
+                          <div key={i} className="c1-log-entry">
+                            <div className="c1-log-header">
+                              <span className={`c1-log-badge ${
+                                log.direction === 'request'
+                                  ? 'c1-log-badge-request'
+                                  : log.status && log.status >= 400
+                                    ? 'c1-log-badge-response-err'
+                                    : 'c1-log-badge-response-ok'
+                              }`}>
+                                {log.direction === 'request' ? 'ЗАПРОС' : 'ОТВЕТ'}
+                              </span>
+                              <span className="c1-log-endpoint">{log.endpoint}</span>
+                              {log.status && (
+                                <span className="c1-log-status">[{log.status}]</span>
+                              )}
+                              {log.duration && (
+                                <span className="c1-log-status">{log.duration}ms</span>
+                              )}
+                              <span className="c1-log-time">
+                                {new Date(log.timestamp).toLocaleTimeString('ru-RU')}
+                              </span>
+                            </div>
+                            <pre className="c1-log-payload">{log.payload}</pre>
+                          </div>
+                        ))
+                      )}
+                      <div ref={logsEndRef} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ height: 8 }} />
+            </div>
+          </div>
+
+          {/* ===== Status Bar ===== */}
+          <div className="c1-status-bar">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className="c1-status-dot c1-status-dot-green c1-pulse" />
+              <span>
+                Консультаций: {activeRooms.length} активных, {archiveRooms.length} в архиве
+              </span>
+            </div>
+            <span>{new Date().toLocaleTimeString('ru-RU')}</span>
+          </div>
         </div>
-        <span className="text-xs text-slate-400">
-          {new Date().toLocaleTimeString('ru-RU')}
-        </span>
       </div>
     </div>
   );

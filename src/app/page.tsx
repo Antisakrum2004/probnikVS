@@ -4,6 +4,101 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import type { Room, ApiLogEntry } from '@/lib/types';
 
+/* SVG Icons — 1C Navigation */
+function IconGrid() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <rect x="1" y="1" width="7" height="7" />
+      <rect x="12" y="1" width="7" height="7" />
+      <rect x="1" y="12" width="7" height="7" />
+      <rect x="12" y="12" width="7" height="7" />
+    </svg>
+  );
+}
+
+function IconBook() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="2" width="14" height="16" />
+      <line x1="7" y1="2" x2="7" y2="18" />
+      <line x1="10" y1="6" x2="15" y2="6" />
+      <line x1="10" y1="9" x2="15" y2="9" />
+      <line x1="10" y1="12" x2="15" y2="12" />
+    </svg>
+  );
+}
+
+function IconList() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <line x1="5" y1="4" x2="17" y2="4" />
+      <line x1="5" y1="10" x2="17" y2="10" />
+      <line x1="5" y1="16" x2="17" y2="16" />
+      <circle cx="2" cy="4" r="1" fill="currentColor" />
+      <circle cx="2" cy="10" r="1" fill="currentColor" />
+      <circle cx="2" cy="16" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconChart() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="2" y="12" width="3" height="6" fill="currentColor" />
+      <rect x="7" y="8" width="3" height="10" fill="currentColor" />
+      <rect x="12" y="4" width="3" height="14" fill="currentColor" />
+      <rect x="17" y="1" width="3" height="17" fill="currentColor" />
+    </svg>
+  );
+}
+
+/* 1C Logo */
+function Logo1C() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" style={{ width: 16, height: 16, flexShrink: 0 }}>
+      <rect width="16" height="16" rx="1" fill="#2B5879" />
+      <text x="3" y="12" fontSize="10" fontWeight="bold" fill="white" fontFamily="Arial, sans-serif">1C</text>
+    </svg>
+  );
+}
+
+/* Arrow icons */
+function ArrowDown() {
+  return (
+    <svg className="c1-group-arrow" viewBox="0 0 9 9" fill="currentColor">
+      <path d="M1 3L4.5 7L8 3H1Z" />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg className="c1-group-arrow" viewBox="0 0 9 9" fill="currentColor">
+      <path d="M3 1L7 4.5L3 8V1Z" />
+    </svg>
+  );
+}
+
+/* Spinner */
+function Spinner({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ animation: 'c1-spin 0.6s linear infinite' }}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.25" />
+      <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" fill="currentColor" opacity="0.75" />
+    </svg>
+  );
+}
+
+/* Video icon */
+function IconVideo() {
+  return (
+    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M1 4C1 3.44772 1.44772 3 2 3H10C10.5523 3 11 3.44772 11 4V14C11 14.5523 10.5523 15 10 15H2C1.44772 15 1 14.5523 1 14V4Z" />
+      <path d="M11 6L15 4V14L11 12" />
+    </svg>
+  );
+}
+
 export default function HomePage() {
   const [doctorName, setDoctorName] = useState('Доктор Петров П.П.');
   const [patientName, setPatientName] = useState('Иванов И.И.');
@@ -73,374 +168,377 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* 1C Title Bar */}
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 bg-yellow-500 rounded-sm flex items-center justify-center">
-              <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
-                <rect x="1" y="1" width="6" height="6" rx="0.5" />
-                <rect x="9" y="1" width="6" height="6" rx="0.5" />
-                <rect x="1" y="9" width="6" height="6" rx="0.5" />
-                <rect x="9" y="9" width="6" height="6" rx="0.5" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-slate-800">1С:МИС</span>
-          </div>
-          <span className="text-slate-400">|</span>
-          <span className="text-sm text-slate-700 font-semibold">Запись на приём</span>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      {/* ===== 1. Title Bar ===== */}
+      <div className="c1-title-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Logo1C />
+          <span className="c1-title-bar-text">1С:МИС</span>
+          <span className="c1-title-bar-separator">|</span>
+          <span className="c1-title-bar-active">Запись на приём</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">Эмуляция</span>
-          <div className="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer rounded-sm hover:bg-amber-100">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-        </div>
+        <span className="c1-title-bar-muted">Эмуляция</span>
       </div>
 
-      {/* Command Toolbar */}
-      <div className="bg-slate-100 border-b border-slate-300 px-3 py-1.5 flex items-center gap-2 shrink-0">
-        <button
-          onClick={handleCreate}
-          disabled={creating}
-          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 rounded-sm px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Создать
-        </button>
-        <button
-          disabled={!createdRoom}
-          className="inline-flex items-center gap-1.5 bg-white border border-slate-300 rounded-sm px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-          </svg>
-          Записать
-        </button>
-        <button
-          disabled={!createdRoom}
-          className="inline-flex items-center gap-1.5 bg-blue-600 border border-blue-600 rounded-sm px-3 py-1.5 text-xs text-white hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          Провести и закрыть
-        </button>
-        <div className="flex-1" />
-        <span className="text-xs text-slate-400 font-mono">
-          {new Date().toLocaleDateString('ru-RU')}
-        </span>
-      </div>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* ===== 2. Navigation Panel ===== */}
+        <div className="c1-nav-panel">
+          <div className="c1-nav-btn active" title="Разделы">
+            <IconGrid />
+          </div>
+          <div className="c1-nav-btn" title="Справочники">
+            <IconBook />
+          </div>
+          <div className="c1-nav-btn" title="Документы">
+            <IconList />
+          </div>
+          <div className="c1-nav-btn" title="Отчёты">
+            <IconChart />
+          </div>
+        </div>
 
-      {/* Main Form Area */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto py-4 space-y-1">
-          {/* Success Notification */}
-          {createdRoom && (
-            <div className="bg-green-50 border border-green-300 rounded-sm px-4 py-2.5 flex items-center gap-2 mb-3">
-              <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+          {/* ===== 3. Command Toolbar ===== */}
+          <div className="c1-toolbar">
+            <button className="c1-toolbar-btn" disabled={creating} onClick={handleCreate}>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="7" y1="1" x2="7" y2="13" />
+                <line x1="1" y1="7" x2="13" y2="7" />
               </svg>
-              <div>
-                <span className="text-sm font-medium text-green-800">Видеоконсультация создана.</span>
-                <span className="text-xs text-green-600 ml-2">
-                  EmAI session: {createdRoom.emaiSessionId || '—'}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div className="bg-red-50 border border-red-300 rounded-sm px-4 py-2.5 flex items-center gap-2 mb-3">
-              <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              Создать и закрыть
+            </button>
+            <button className="c1-toolbar-btn" disabled={creating} onClick={handleCreate}>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="7" y1="1" x2="7" y2="13" />
+                <line x1="1" y1="7" x2="13" y2="7" />
               </svg>
-              <span className="text-sm text-red-800">{error}</span>
-            </div>
-          )}
-
-          {/* Section: Пациент */}
-          <div className="border border-slate-300 rounded-sm bg-white">
-            <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300">
-              Пациент
-            </div>
-            <div className="p-4 space-y-2">
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">ФИО:</label>
-                <input
-                  type="text"
-                  value={patientName}
-                  onChange={(e) => setPatientName(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">Дата рожд.:</label>
-                <input
-                  type="text"
-                  value={patientBirth}
-                  onChange={(e) => setPatientBirth(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">Телефон:</label>
-                <input
-                  type="text"
-                  value={patientPhone}
-                  onChange={(e) => setPatientPhone(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">personID:</label>
-                <input
-                  type="text"
-                  value={patientId}
-                  onChange={(e) => setPatientId(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-            </div>
+              Создать
+            </button>
+            <button className="c1-toolbar-btn" disabled={!createdRoom}>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M2 10v2h2l7-7-2-2L2 10z" />
+                <path d="M9 3l2-2 2 2-2 2" />
+              </svg>
+              Записать
+            </button>
+            <div className="c1-toolbar-sep" />
+            <button className="c1-toolbar-btn c1-toolbar-btn-green" disabled={!createdRoom}>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M3 7l3 3 5-5" />
+              </svg>
+              Провести и закрыть
+            </button>
+            <div className="c1-toolbar-sep" />
+            <button className="c1-toolbar-btn" disabled>
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <line x1="2" y1="2" x2="12" y2="12" />
+                <line x1="12" y1="2" x2="2" y2="12" />
+              </svg>
+              Отмена
+            </button>
+            <div style={{ flex: 1 }} />
+            <span style={{ fontSize: 11, color: '#999', fontFamily: 'monospace' }}>
+              {new Date().toLocaleDateString('ru-RU')}
+            </span>
           </div>
 
-          {/* Section: Врач */}
-          <div className="border border-slate-300 rounded-sm bg-white">
-            <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300">
-              Врач
-            </div>
-            <div className="p-4 space-y-2">
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">ФИО:</label>
-                <input
-                  type="text"
-                  value={doctorName}
-                  onChange={(e) => setDoctorName(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">Специальн.:</label>
-                <input
-                  type="text"
-                  value={doctorSpec}
-                  onChange={(e) => setDoctorSpec(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">spec_id:</label>
-                <input
-                  type="text"
-                  value={doctorSpecId}
-                  onChange={(e) => setDoctorSpecId(e.target.value)}
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 font-mono focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                />
-              </div>
-            </div>
-          </div>
+          {/* ===== 4. Form Area ===== */}
+          <div className="c1-form-area">
+            <div className="c1-form-container">
 
-          {/* Section: Параметры консультации */}
-          <div className="border border-slate-300 rounded-sm bg-white">
-            <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300">
-              Параметры консультации
-            </div>
-            <div className="p-4 space-y-2">
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">Тип:</label>
-                <div className="relative flex-1">
-                  <select
-                    value={consultType}
-                    onChange={(e) => setConsultType(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 appearance-none pr-8"
-                  >
-                    <option>Видеоконсультация</option>
-                    <option>Аудиоконсультация</option>
-                    <option>Чат-консультация</option>
-                  </select>
-                  <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              {/* Success Notification */}
+              {createdRoom && (
+                <div className="c1-notification c1-notification-success">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="7" cy="7" r="6" />
+                    <path d="M4 7l2 2 4-4" />
                   </svg>
+                  <span>
+                    <strong>Видеоконсультация создана.</strong>
+                    <span style={{ marginLeft: 8, color: '#555', fontSize: 11 }}>
+                      EmAI session: {createdRoom.emaiSessionId || '—'}
+                    </span>
+                  </span>
+                </div>
+              )}
+
+              {/* Error Notification */}
+              {error && (
+                <div className="c1-notification c1-notification-error">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="7" cy="7" r="6" />
+                    <line x1="7" y1="4" x2="7" y2="8" />
+                    <circle cx="7" cy="10.5" r="0.5" fill="currentColor" />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Section: Пациент */}
+              <div className="c1-group">
+                <div className="c1-group-header">
+                  <ArrowDown />
+                  <span className="c1-group-title">Пациент</span>
+                </div>
+                <div className="c1-group-body">
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">ФИО:</label>
+                    <input
+                      type="text"
+                      value={patientName}
+                      onChange={(e) => setPatientName(e.target.value)}
+                      className="c1-field-input"
+                    />
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">Дата рождения:</label>
+                    <input
+                      type="text"
+                      value={patientBirth}
+                      onChange={(e) => setPatientBirth(e.target.value)}
+                      className="c1-field-input"
+                    />
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">Телефон:</label>
+                    <input
+                      type="text"
+                      value={patientPhone}
+                      onChange={(e) => setPatientPhone(e.target.value)}
+                      className="c1-field-input"
+                    />
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">personID:</label>
+                    <input
+                      type="text"
+                      value={patientId}
+                      onChange={(e) => setPatientId(e.target.value)}
+                      className="c1-field-input c1-field-input-mono"
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <label className="text-xs text-slate-600 w-24 shrink-0 text-right">Длительность:</label>
-                <div className="relative flex-1">
-                  <select
-                    value={consultDuration}
-                    onChange={(e) => setConsultDuration(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-sm text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 appearance-none pr-8"
-                  >
-                    <option>30 мин</option>
-                    <option>60 мин</option>
-                    <option>90 мин</option>
-                  </select>
-                  <svg className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+
+              {/* Section: Врач */}
+              <div className="c1-group">
+                <div className="c1-group-header">
+                  <ArrowDown />
+                  <span className="c1-group-title">Врач</span>
+                </div>
+                <div className="c1-group-body">
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">ФИО:</label>
+                    <input
+                      type="text"
+                      value={doctorName}
+                      onChange={(e) => setDoctorName(e.target.value)}
+                      className="c1-field-input"
+                    />
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">Специальность:</label>
+                    <input
+                      type="text"
+                      value={doctorSpec}
+                      onChange={(e) => setDoctorSpec(e.target.value)}
+                      className="c1-field-input"
+                    />
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">spec_id:</label>
+                    <input
+                      type="text"
+                      value={doctorSpecId}
+                      onChange={(e) => setDoctorSpecId(e.target.value)}
+                      className="c1-field-input c1-field-input-mono"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Big Create Button */}
-          <div className="pt-2 pb-4">
-            <button
-              onClick={handleCreate}
-              disabled={creating}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm px-6 py-2.5 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm transition-colors"
-            >
-              {creating ? (
+              {/* Section: Параметры консультации */}
+              <div className="c1-group">
+                <div className="c1-group-header">
+                  <ArrowDown />
+                  <span className="c1-group-title">Параметры консультации</span>
+                </div>
+                <div className="c1-group-body">
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">Тип:</label>
+                    <div className="c1-field-select-wrapper">
+                      <select
+                        value={consultType}
+                        onChange={(e) => setConsultType(e.target.value)}
+                        className="c1-field-select"
+                      >
+                        <option>Видеоконсультация</option>
+                        <option>Аудиоконсультация</option>
+                        <option>Чат-консультация</option>
+                      </select>
+                      <svg className="c1-select-arrow" viewBox="0 0 10 10" fill="currentColor">
+                        <path d="M2 4L5 7L8 4H2Z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="c1-field-row">
+                    <label className="c1-field-label">Длительность:</label>
+                    <div className="c1-field-select-wrapper">
+                      <select
+                        value={consultDuration}
+                        onChange={(e) => setConsultDuration(e.target.value)}
+                        className="c1-field-select"
+                      >
+                        <option>30 мин</option>
+                        <option>60 мин</option>
+                        <option>90 мин</option>
+                      </select>
+                      <svg className="c1-select-arrow" viewBox="0 0 10 10" fill="currentColor">
+                        <path d="M2 4L5 7L8 4H2Z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Create Video Button */}
+              <div style={{ padding: '8px 0' }}>
+                <button
+                  onClick={handleCreate}
+                  disabled={creating}
+                  className="c1-btn-primary"
+                >
+                  {creating ? (
+                    <>
+                      <Spinner />
+                      Создание видеосвязи...
+                    </>
+                  ) : (
+                    <>
+                      <IconVideo />
+                      Создать видеосвязь
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* ===== After creation sections ===== */}
+              {createdRoom && (
                 <>
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Создание видеосвязи...
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                  Создать видеосвязь
+                  {/* Section: Push notification */}
+                  <div className="c1-group">
+                    <div className="c1-group-header">
+                      <ArrowDown />
+                      <span className="c1-group-title">Эмуляция push-уведомления пациенту</span>
+                    </div>
+                    <div className="c1-group-body">
+                      <p style={{ fontSize: 12, color: '#555', marginBottom: 8, lineHeight: 1.5 }}>
+                        В реальной системе платформа EmAI автоматически отправляет push-уведомление
+                        на мобильное устройство пациента. Ниже — имитация перехода из push-уведомления
+                        в приложение пациента.
+                      </p>
+                      <Link
+                        href={`/patient/${createdRoom.id}`}
+                        className="c1-btn-action c1-btn-action-blue"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        Отправить push
+                        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 10, height: 10 }}>
+                          <path d="M2 5h6M7 2l3 3-3 3" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Section: ARM link */}
+                  <div className="c1-group">
+                    <div className="c1-group-header">
+                      <ArrowDown />
+                      <span className="c1-group-title">Ссылка для АРМ Врача</span>
+                    </div>
+                    <div className="c1-group-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                      <div>
+                        <p style={{ fontSize: 12, color: '#555', marginBottom: 2 }}>Рабочее место врача — мониторинг консультаций</p>
+                        <p style={{ fontSize: 11, color: '#999', fontFamily: 'monospace' }}>/doctor</p>
+                      </div>
+                      <Link
+                        href="/doctor"
+                        className="c1-btn-action c1-btn-action-gray"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        Открыть АРМ
+                        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 10, height: 10 }}>
+                          <path d="M2 2h4v4H2zM6 4l3 3M9 4v4H5" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Section: Log */}
+                  <div className="c1-group">
+                    <div
+                      className="c1-group-header"
+                      onClick={() => { setShowLogs(!showLogs); if (!showLogs) fetchLogs(); }}
+                    >
+                      {showLogs ? <ArrowDown /> : <ArrowRight />}
+                      <span className="c1-group-title">Журнал обмена с EmAI</span>
+                      <span className="c1-group-badge">{logs.length}</span>
+                    </div>
+                    <div className={`c1-group-body ${showLogs ? '' : 'c1-group-body-collapsed'}`} style={{ padding: 0 }}>
+                      {showLogs && (
+                        <div style={{ maxHeight: 384, overflowY: 'auto' }}>
+                          {logs.length === 0 ? (
+                            <div className="c1-empty-state">Записи отсутствуют</div>
+                          ) : (
+                            logs.map((log, i) => (
+                              <div key={i} className="c1-log-entry">
+                                <div className="c1-log-header">
+                                  <span className={`c1-log-badge ${
+                                    log.direction === 'request'
+                                      ? 'c1-log-badge-request'
+                                      : log.status && log.status >= 400
+                                        ? 'c1-log-badge-response-err'
+                                        : 'c1-log-badge-response-ok'
+                                  }`}>
+                                    {log.direction === 'request' ? 'ЗАПРОС' : 'ОТВЕТ'}
+                                  </span>
+                                  <span className="c1-log-endpoint">{log.endpoint}</span>
+                                  {log.status && (
+                                    <span className="c1-log-status">[{log.status}]</span>
+                                  )}
+                                  {log.duration && (
+                                    <span className="c1-log-status">{log.duration}ms</span>
+                                  )}
+                                  <span className="c1-log-time">
+                                    {new Date(log.timestamp).toLocaleTimeString('ru-RU')}
+                                  </span>
+                                </div>
+                                <pre className="c1-log-payload">{log.payload}</pre>
+                              </div>
+                            ))
+                          )}
+                          <div ref={logsEndRef} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </>
               )}
-            </button>
+
+              {/* Bottom padding */}
+              <div style={{ height: 8 }} />
+            </div>
           </div>
 
-          {/* After creation — Push notification section */}
-          {createdRoom && (
-            <>
-              {/* Section: Эмуляция push-уведомления */}
-              <div className="border border-slate-300 rounded-sm bg-white">
-                <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300">
-                  Эмуляция push-уведомления пациенту
-                </div>
-                <div className="p-4">
-                  <p className="text-xs text-slate-600 mb-3 leading-relaxed">
-                    В реальной системе платформа EmAI автоматически отправляет push-уведомление на мобильное устройство пациента.
-                    Ниже — имитация перехода из push-уведомления в приложение пациента.
-                  </p>
-                  <Link
-                    href={`/patient/${createdRoom.id}`}
-                    className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm px-4 py-2 text-xs transition-colors"
-                  >
-                    Отправить push
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Section: Ссылка для АРМ Врача */}
-              <div className="border border-slate-300 rounded-sm bg-white">
-                <div className="bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider px-4 py-2 border-b border-slate-300">
-                  Ссылка для АРМ Врача
-                </div>
-                <div className="p-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-600 mb-0.5">Рабочее место врача — мониторинг консультаций</p>
-                    <p className="text-xs text-slate-400 font-mono">{new URL('/doctor', typeof window !== 'undefined' ? window.location.origin : '').href}</p>
-                  </div>
-                  <Link
-                    href="/doctor"
-                    className="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-300 hover:bg-slate-200 text-slate-700 font-medium rounded-sm px-4 py-2 text-xs transition-colors"
-                  >
-                    Открыть АРМ
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Collapsible: Журнал обмена с EmAI */}
-              <div className="border border-slate-300 rounded-sm bg-white overflow-hidden">
-                <button
-                  onClick={() => { setShowLogs(!showLogs); if (!showLogs) fetchLogs(); }}
-                  className="w-full flex items-center justify-between px-4 py-2 bg-slate-200 text-slate-700 font-semibold text-xs uppercase tracking-wider hover:bg-slate-300 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span>Журнал обмена с EmAI</span>
-                    <span className="bg-slate-400 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-medium">
-                      {logs.length}
-                    </span>
-                  </div>
-                  <svg
-                    className={`w-3.5 h-3.5 text-slate-500 transition-transform ${showLogs ? 'rotate-180' : ''}`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {showLogs && (
-                  <div className="border-t border-slate-300 max-h-96 overflow-y-auto">
-                    {logs.length === 0 ? (
-                      <div className="p-6 text-center text-slate-400 text-xs">Записи отсутствуют</div>
-                    ) : (
-                      <div className="divide-y divide-slate-200">
-                        {logs.map((log, i) => (
-                          <div key={i} className="p-3 hover:bg-slate-50 transition-colors">
-                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-bold ${
-                                log.direction === 'request'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : log.status && log.status >= 400
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-green-100 text-green-700'
-                              }`}>
-                                {log.direction === 'request' ? 'ЗАПРОС' : 'ОТВЕТ'}
-                              </span>
-                              <span className="text-xs text-slate-500 font-mono">{log.endpoint}</span>
-                              {log.status && (
-                                <span className="text-xs text-slate-400 font-mono">[{log.status}]</span>
-                              )}
-                              {log.duration && (
-                                <span className="text-xs text-slate-400 font-mono">{log.duration}ms</span>
-                              )}
-                              <span className="text-xs text-slate-400 ml-auto">
-                                {new Date(log.timestamp).toLocaleTimeString('ru-RU')}
-                              </span>
-                            </div>
-                            <pre className="text-[11px] text-slate-600 bg-slate-100 rounded-sm p-2 overflow-x-auto max-h-32 font-mono leading-relaxed border border-slate-200">
-                              {log.payload}
-                            </pre>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div ref={logsEndRef} />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Padding at bottom for status bar */}
-          <div className="h-4" />
+          {/* ===== 5. Status Bar ===== */}
+          <div className="c1-status-bar">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className={`c1-status-dot ${createdRoom ? 'c1-status-dot-green' : 'c1-status-dot-gray'}`} />
+              <span>{createdRoom ? 'Документ проведён' : 'Новый документ'}</span>
+            </div>
+            <span>Платформа: Jitsi Meet (демо)</span>
+          </div>
         </div>
-      </main>
-
-      {/* Status Bar */}
-      <div className="bg-amber-50 border-t border-amber-200 px-4 py-1.5 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${createdRoom ? 'bg-green-500' : 'bg-slate-400'}`} />
-          <span className="text-xs text-slate-600">
-            {createdRoom ? 'Документ проведён' : 'Новый документ'}
-          </span>
-        </div>
-        <span className="text-xs text-slate-400">
-          Платформа: Jitsi Meet (демо)
-        </span>
       </div>
     </div>
   );
