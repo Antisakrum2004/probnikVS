@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🩺 ProbNIK VS
 
-First, run the development server:
+### Демо видеоконсультаций врач ↔ пациент: 1С:МИС + EmAI + Jitsi
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-000?style=flat-square&logo=vercel&logoColor=white)](https://probnik-vs.vercel.app/)
+[![1C](https://img.shields.io/badge/1С%3AМИС-UI_demo-F5C327?style=flat-square)](https://github.com/Antisakrum2004/probnikVS)
+
+[![Открыть демо](https://img.shields.io/badge/Live-probnik--vs.vercel.app-brightgreen?style=for-the-badge&logo=vercel&logoColor=white)](https://probnik-vs.vercel.app/)
+
+</div>
+
+---
+
+## О проекте
+
+**ProbNIK VS** — клиентское демо интеграции **1С:МИС** с платформой **EmAI** и **Jitsi Meet** для видеоконсультаций.
+
+Цель: показать рабочий прототип — врач создаёт консультацию в интерфейсе «как в 1С», пациент открывает мобильную страницу / APK, оба подключаются к видеокомнате.
+
+---
+
+## Возможности
+
+- 🖥️ **АРМ врача** — создание консультации в pixel-perfect стиле 1С
+- 📱 **Страница пациента** — мобильный UX без лишнего ввода
+- 🎥 **Видеокомната** — Jitsi через EmAI Gateway
+- 🔌 **API routes** — create / complete / cancel / status / logs / JWT
+- 📦 **Расширение 1С** — модули `.bsl` для production-контура
+- 🐳 **Docker** — конфиги Jitsi / nginx для полного стенда
+- 📲 **APK** — Capacitor-обёртка пациентского сценария (если опубликована в демо)
+
+---
+
+## Архитектура
+
+```
+Production (по ТЗ):
+1С МИС → PHP Middleware → EmAI Gateway → Jitsi Meet
+
+Демо (Vercel):
+Next.js → API routes → EmAI → Jitsi Meet
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Стек
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Слой | Технологии |
+|------|------------|
+| Web demo | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
+| Deploy | Vercel |
+| Video | Jitsi Meet, EmAI |
+| 1С | Расширение `.bsl` (формы записи / консультации / отмены) |
+| Middleware | PHP (для полного контура) |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Ссылки
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| | URL |
+|---|-----|
+| 🌐 Демо | https://probnik-vs.vercel.app/ |
+| 📦 GitHub | https://github.com/Antisakrum2004/probnikVS |
+| 📓 Журнал разработки | [`PROGRESS.md`](./PROGRESS.md) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Быстрый старт
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git clone https://github.com/Antisakrum2004/probnikVS.git
+cd probnikVS
+npm install
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Откройте [http://localhost:3000](http://localhost:3000).
+
+Переменные окружения для EmAI / JWT задайте локально (`.env` / Vercel env) — **не коммитьте секреты**.
+
+---
+
+## Структура (ключевое)
+
+```
+probnikVS/
+├── src/app/                 # Next.js App Router (врач, пациент, video, API)
+├── src/1c-extension/        # Модули расширения 1С
+├── src/php-middleware/      # PHP middleware
+├── src/docker/              # Jitsi + nginx
+├── docs/ · architecture/ · demo/
+├── PROGRESS.md              # Хронология разработки
+└── vercel.json
+```
+
+---
+
+<div align="center">
+
+**Видеоконсультации без трения** · [Antisakrum2004](https://github.com/Antisakrum2004)
+
+⭐ Если демо полезно — поставьте звезду
+
+</div>
